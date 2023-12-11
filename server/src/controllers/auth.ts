@@ -12,37 +12,27 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const { name, email, pass } = SignupSchema.parse(req.body);
+  const { name, email, pass } = SignupSchema.parse(req.body);
 
-    let user = await prismaClient.user.findFirst({ where: { email } });
+  let user = await prismaClient.user.findFirst({ where: { email } });
 
-    if (user) {
-      next(
-        new BadRequestsException(
-          "User already exists!",
-          ErrorCodes.USER_ALERADY_EXISTS
-        )
-      );
-    }
-
-    user = await prismaClient.user.create({
-      data: {
-        name,
-        email,
-        pass: hashSync(pass, 10),
-      },
-    });
-    res.json(user);
-  } catch (err: any) {
+  if (user) {
     next(
-      new UnprocessableEntity(
-        err?.issues,
-        "Unprocessable entity",
-        ErrorCodes.UNPROCESSABLE_ENTITY
+      new BadRequestsException(
+        "User already exists!",
+        ErrorCodes.USER_ALERADY_EXISTS
       )
     );
   }
+
+  user = await prismaClient.user.create({
+    data: {
+      name,
+      email,
+      pass: hashSync(pass, 10),
+    },
+  });
+  res.json(user);
 };
 
 export const login = async (
@@ -50,8 +40,7 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const { email, pass } = LoginSchema.parse(req.body);
+     const { email, pass } = LoginSchema.parse(req.body);
 
     let user = await prismaClient.user.findFirst({ where: { email } });
 
@@ -74,13 +63,4 @@ export const login = async (
     };
 
     res.json({ userData, token });
-  } catch (err: any) {
-    next(
-      new UnprocessableEntity(
-        err?.issues,
-        "Unprocessable entity",
-        ErrorCodes.UNPROCESSABLE_ENTITY
-      )
-    );
-  }
 };
