@@ -4,8 +4,8 @@ import { hashSync, compareSync } from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { BadRequestsException } from "../exceptions/bad-requests";
 import { ErrorCodes } from "../exceptions/root";
-import { UnprocessableEntity } from "../exceptions/validation";
 import { LoginSchema, SignupSchema } from "../schema/users";
+import { NotFoundException } from "../exceptions/not-found";
 
 export const signup = async (
   req: Request,
@@ -17,11 +17,9 @@ export const signup = async (
   let user = await prismaClient.user.findFirst({ where: { email } });
 
   if (user) {
-    next(
-      new BadRequestsException(
-        "User already exists!",
-        ErrorCodes.USER_ALERADY_EXISTS
-      )
+    new BadRequestsException(
+      "User already exists!",
+      ErrorCodes.USER_ALERADY_EXISTS
     );
   }
 
@@ -40,27 +38,30 @@ export const login = async (
   res: Response,
   next: NextFunction
 ) => {
-     const { email, pass } = LoginSchema.parse(req.body);
+  const { email, pass } = LoginSchema.parse(req.body);
 
-    let user = await prismaClient.user.findFirst({ where: { email } });
+  let user = await prismaClient.user.findFirst({ where: { email } });
 
-    if (!user) {
-      throw Error("User does not exists!");
-    }
-    if (!compareSync(pass, user.pass)) {
-      throw Error("Incorrect password!");
-    }
-    const token = jwt.sign(
-      {
-        userId: user.id,
-      },
-      "secretKeyBlogFullStack"
+  if (!user) {
+    throw new NotFoundException("User not found.", ErrorCodes.USER_NOT_FOUND);
+  }
+  if (!compareSync(pass, user.pass)) {
+    throw new BadRequestsException(
+      "Incorrect Password",
+      ErrorCodes.INCORRECT_PASSWORD
     );
+  }
+  const token = jwt.sign(
+    {
+      userId: user.id,
+    },
+    "secretKeyBlogFullStack"
+  );
 
-    let userData = {
-      ...user,
-      pass: "",
-    };
+  let userData = {
+    ...user,
+    pass: "",
+  };
 
-    res.json({ userData, token });
+  res.json({ userData, token });
 };
