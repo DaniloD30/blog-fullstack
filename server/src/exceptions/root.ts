@@ -1,5 +1,3 @@
-// message, status code, error codes, error
-
 export class HttpException extends Error {
   message: string;
   errorCode: any;

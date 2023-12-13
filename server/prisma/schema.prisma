@@ -17,6 +17,7 @@ model User {
   pass  String
 }
 
+//Preciso do User Name em Post para mostrar no quadro
 model Post {
   id      Int      @id @default(autoincrement())
   title   String

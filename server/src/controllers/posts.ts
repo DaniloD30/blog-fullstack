@@ -23,7 +23,7 @@ export const createPost = async (
 
   res.json({ task });
 };
-//Done
+
 export const getAllPosts = async (
   req: Request,
   res: Response,
@@ -43,7 +43,6 @@ export const getAllPosts = async (
 
   res.json({ posts });
 };
-//Done
 
 export const getPostById = async (
   req: Request,
@@ -60,7 +59,7 @@ export const getPostById = async (
 
   res.json({ post });
 };
-//setar rota
+
 export const updatePost = async (
   req: Request,
   res: Response,
@@ -69,18 +68,19 @@ export const updatePost = async (
   const { idPost } = PostsSchemaGetById.parse(req.params);
   const { title, content, userId } = PostsSchema.parse(req.body);
 
-  const postEdited = await prismaClient.post.update({
+   const postEdited = await prismaClient.post.update({
     where: {
       id: +idPost,
     },
     data: {
       title,
       content,
-      userId,
+      userId
     },
   });
+  res.json({ postEdited });
 };
-//setar rota
+
 export const deletePost = async (
   req: Request,
   res: Response,
@@ -88,9 +88,10 @@ export const deletePost = async (
 ) => {
   const { idPost } = PostsSchemaGetById.parse(req.params);
 
-  const task = await prismaClient.post.delete({
+  const post = await prismaClient.post.delete({
     where: {
       id: +idPost,
     },
   });
+  res.json({ post });
 };

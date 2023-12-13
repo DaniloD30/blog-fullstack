@@ -1,12 +1,22 @@
-import {Router} from 'express'
-import { createPost, getAllPosts, getPostById } from '../controllers/posts'
-import { authMiddleware } from '../error-handler'
+import { Router } from "express";
+import {
+  createPost,
+  deletePost,
+  getAllPosts,
+  getPostById,
+  updatePost,
+} from "../controllers/posts";
+import { authMiddleware } from "../error-handler";
 
-const postsRoutes: Router = Router()
+const postsRoutes: Router = Router();
 
-postsRoutes.post('/createPost', authMiddleware(createPost))
-//done 
-postsRoutes.get('/posts', authMiddleware(getAllPosts))
-// done
-postsRoutes.get('/posts/:idPost', authMiddleware(getPostById))
-export default postsRoutes
+postsRoutes.post("/posts", authMiddleware(createPost));
+
+postsRoutes.get("/posts", authMiddleware(getAllPosts));
+
+postsRoutes.get("/posts/:idPost", authMiddleware(getPostById));
+
+postsRoutes.put("/posts/:idPost", authMiddleware(updatePost));
+
+postsRoutes.delete("/posts/:idPost", authMiddleware(deletePost));
+export default postsRoutes;
