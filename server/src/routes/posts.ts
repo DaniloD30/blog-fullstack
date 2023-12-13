@@ -1,10 +1,12 @@
 import {Router} from 'express'
-import { createPost, getAllPosts } from '../controllers/posts'
+import { createPost, getAllPosts, getPostById } from '../controllers/posts'
 import { authMiddleware } from '../error-handler'
 
 const postsRoutes: Router = Router()
 
 postsRoutes.post('/createPost', authMiddleware(createPost))
-//em teste
+//done 
 postsRoutes.get('/posts', authMiddleware(getAllPosts))
+// done
+postsRoutes.get('/posts/:idPost', authMiddleware(getPostById))
 export default postsRoutes

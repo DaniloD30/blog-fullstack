@@ -43,7 +43,7 @@ export const getAllPosts = async (
 
   res.json({ posts });
 };
-//setar rota
+//Done
 
 export const getPostById = async (
   req: Request,
